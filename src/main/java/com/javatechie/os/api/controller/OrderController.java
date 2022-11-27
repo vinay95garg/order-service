@@ -21,6 +21,6 @@ public class OrderController {
     @PostMapping("/bookOrder")
     public TransactionResponse bookOrder(@RequestBody TransactionRequest request){
         return orderService.saveOrder(request);
-        // do a rest call to parent and pass order id
+        // do a rest call to payment and pass order id
     }
 }

@@ -19,17 +19,32 @@ public class OrderService {
     private RestTemplate template;
 
     public TransactionResponse saveOrder(TransactionRequest request){
-        String response ="";
+        String response = "";
         Order order = request.getOrder();
         Payment payment = request.getPayment();
         payment.setOrderId(order.getId());
         payment.setAmount(order.getPrice());
 
         //rest call
+        Payment paymentResponse = template.postForObject("http://localhost:9191/payment/doPayment",payment,Payment.class);
 
-        Payment paymentResponse = template.postForObject("http://PAYMENT-SERVICE/payment/doPayment",payment,Payment.class);
-        response = paymentResponse.getPaymentStatus().equals("success")?"Payment processing successful and order placed":"there is a failure in payment api , add to cart";
+        response = paymentResponse.getPaymentStatus().equals("success")?"Payment processing successful and order placed": "Add to Cart";
         orderRepository.save(order);
         return new TransactionResponse(order,paymentResponse.getAmount(),paymentResponse.getTransactionId(),response);
+
     }
+//        String response ="";
+//    //    Order order = request.getOrder();
+//        Payment payment = request.getPayment();
+//        payment.setOrderId(order.getId());
+//        payment.setAmount(order.getPrice());
+//
+//        //rest call
+//
+//        Payment paymentResponse = template.postForObject("http://PAYMENT-SERVICE/payment/doPayment",payment,Payment.class);
+//        response = paymentResponse.getPaymentStatus().equals("success")?"Payment processing successful and order placed":"there is a failure in payment api , add to cart";
+//        orderRepository.save(order);
+//        return new TransactionResponse(order,paymentResponse.getAmount(),paymentResponse.getTransactionId(),response);
+//
+//    }
 }
